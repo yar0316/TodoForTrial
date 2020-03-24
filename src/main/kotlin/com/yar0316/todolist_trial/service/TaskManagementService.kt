@@ -24,7 +24,6 @@ import com.yar0316.todolist_trial.repository.TaskRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 const val PAST = 1
 const val FUTURE = 2
@@ -94,5 +93,30 @@ class TaskManagementService {
             FUTURE -> {date -> date > LocalDate.now().minusDays(1L)}
             else -> throw RuntimeException("時制が不明です")
         }
+    }
+
+    /**
+     * エンティティのリストをフォームのリストに変換
+     * @param entityList 変換元
+     * @return 変換されたフォームのリスト
+     */
+    fun toFormList(entityList: List<Task>): List<TaskForm> {
+        val formList = ArrayList<TaskForm>()
+
+        entityList.forEach{ formList.add(it.toForm() as TaskForm) }
+        return formList
+    }
+
+    /**
+     * フォームのリストをエンティティのリストに変換
+     * 使用未定
+     * @param formList 変換元
+     * @return 変換されたエンティティのリスト
+     */
+    fun toEntityList(formList: List<TaskForm>): List<Task> {
+        val entityList = ArrayList<Task>()
+
+        formList.forEach { entityList.add(it.toEntity() as Task) }
+        return entityList
     }
 }
