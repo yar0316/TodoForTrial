@@ -23,6 +23,7 @@ import com.yar0316.todolist_trial.form.TaskForm
 import com.yar0316.todolist_trial.repository.TaskRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.text.Normalizer
 import java.time.LocalDate
 
 const val PAST = 1
@@ -37,20 +38,20 @@ class TaskManagementService {
     @Autowired
     private lateinit var taskRepository: TaskRepository
 
-    fun findAll(): List<Task> = taskRepository.findAll().toList()
+    fun findAll(): List<TaskForm> = toFormList(taskRepository.findAll().toList())
 
-    fun findByTitle(title: String): List<Task> = taskRepository.findByTitle("*${title}*")
+    fun findByTitle(title: String): List<TaskForm> = toFormList(taskRepository.findByTitle("*${title}*"))
 
-    fun findByCreatedDate(inputDate: String): List<Task>{
+    fun findByCreatedDate(inputDate: String): List<TaskForm>{
         // 作成日は今日以前の過去でなければ不正なので探さずに空っぽで返す
         val date = chkAndParseDate(inputDate, PAST) ?: return mutableListOf()
-        return taskRepository.findByCreatedDate(date)
+        return toFormList(taskRepository.findByCreatedDate(date))
     }
 
-    fun findByDeadline(inputDate: String): List<Task> {
+    fun findByDeadline(inputDate: String): List<TaskForm> {
         //　締切なので今日以降の未来でなければ不正なので探さずに空っぽで返す
         val date = chkAndParseDate(inputDate, FUTURE) ?: return mutableListOf()
-        return taskRepository.findByDeadline(date)
+        return toFormList(taskRepository.findByDeadline(date))
     }
 
     fun createTask(taskForm: TaskForm): String{

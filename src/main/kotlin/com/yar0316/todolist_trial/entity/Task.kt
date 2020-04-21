@@ -1,6 +1,5 @@
 package com.yar0316.todolist_trial.entity
 
-import com.fasterxml.jackson.databind.ser.Serializers
 import com.yar0316.todolist_trial.form.BaseForm
 import com.yar0316.todolist_trial.form.TaskForm
 import com.yar0316.todolist_trial.service.DEFAULT_DATE_FORMAT
@@ -40,7 +39,7 @@ data class Task(
         form.id = this.id?.toString()
         form.title = this.title
         form.createdDate = this.createdDate.format(formatter)
-        form.deadLine = this.deadline.format(formatter)
+        form.deadline = this.deadline.format(formatter)
 
         return form
     }

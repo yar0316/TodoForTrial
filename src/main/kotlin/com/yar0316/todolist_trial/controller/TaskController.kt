@@ -20,7 +20,7 @@ class TaskController {
     @Autowired
     private lateinit var taskManagementService: TaskManagementService
 
-    @RequestMapping(value = ["list"], method = [RequestMethod.GET])
+    @RequestMapping(value = ["/","list"], method = [RequestMethod.GET])
     fun fetchAll(model: Model): String {
         model.addAttribute("tasks", taskManagementService.findAll())
         return "index"

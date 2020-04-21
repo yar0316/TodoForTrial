@@ -16,7 +16,7 @@ class TaskForm() : BaseForm, Serializable {
     var id: String? = null
     var title: String = ""
     var createdDate: String = ""
-    var deadLine: String = ""
+    var deadline: String = ""
     var progressFlag: Boolean = false
 
     constructor(
@@ -46,7 +46,7 @@ class TaskForm() : BaseForm, Serializable {
         this.id = id
         this.title = title
         this.createdDate = createdDate
-        this.deadLine = deadLine
+        this.deadline = deadLine
         this.progressFlag = progressFlag
     }
 
@@ -54,7 +54,7 @@ class TaskForm() : BaseForm, Serializable {
     this.id?.toInt(),
     this.title,
     LocalDate.parse(this.createdDate),
-    LocalDate.parse(this.deadLine),
+    LocalDate.parse(this.deadline),
     this.progressFlag
     )
 
