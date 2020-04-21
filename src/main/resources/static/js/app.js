@@ -18,6 +18,11 @@ var app = new Vue({
                 .then(response => this.tasks = response)
                 .bind(this)
         },
+        deleteTask: function (itemName, index) {
+            if(confirm(`${itemName}を削除しますか？`)){
+                this.taskList = this.taskList.filter(n => n !== this.taskList[index])
+            }
+        }
     },
     created() {
         this.taskList = [{

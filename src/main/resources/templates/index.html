@@ -37,17 +37,18 @@
                 </label>
             </div>
             <div class="right-align el-card-bottom">
-                <button class="waves-effect btn-flat" v-on:click="item.editFlag = !item.editFlag">
+                <button class="waves-effect btn-flat" @click="item.editFlag = !item.editFlag">
                     <i class="material-icons" style="color: lightseagreen" v-if="item.editFlag">done</i>
                     <i class="far fa-edit" style="color: dimgray" v-else></i>
                 </button>
-                <button class="waves-effect btn-flat" style="color: Tomato"><i class="far fa-trash-alt"></i>
+                <button class="waves-effect btn-flat" style="color: Tomato" @click="deleteTask(item.title, index)">
+                    <i class="far fa-trash-alt"></i>
                 </button>
             </div>
         </li>
     </ul>
     <ul v-else>
-        <li class="card-panel hoverable" v-for="item in taskList">
+        <li class="card-panel hoverable" v-for="(item, index) in taskList">
             <div class="row" v-if="item.editFlag">
                 <div class="col s4">
                     <form @submit.prevent="item.editFlag = !item.editFlag">
@@ -63,11 +64,12 @@
                 </label>
             </div>
             <div class="right-align el-card-bottom">
-                <button class="waves-effect btn-flat" v-on:click="item.editFlag = !item.editFlag">
+                <button class="waves-effect btn-flat" @click="item.editFlag = !item.editFlag">
                     <i class="material-icons" style="color: lightseagreen" v-if="item.editFlag">done</i>
                     <i class="far fa-edit" style="color: dimgray" v-else></i>
                 </button>
-                <button class="waves-effect btn-flat" style="color: Tomato"><i class="far fa-trash-alt"></i>
+                <button class="waves-effect btn-flat" style="color: Tomato" @click="deleteTask(item.title, index)">
+                    <i class="far fa-trash-alt"></i>
                 </button>
             </div>
         </li>
