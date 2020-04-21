@@ -1,28 +1,83 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>タスク一覧</title>
+    <meta charset="UTF-8">
+    <title>Vue Sample</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-    <h1>タスク一覧</h1>
-    <ul>
+<div id="app" class="container">
+    <h1>Todo List</h1>
 
+    <form @submit.prevent="addNewItem">
+        <input type="text" placeholder="Add a new item..." v-model="input">
+    </form>
+    <p class="right-align">
+        <label>
+            <input type="checkbox" v-model="showOnlyIncomplete">
+            <span>Show only incomplete tasks</span>
+        </label>
+    </p>
+    <!--    "完了してないもののみ表示"にチェックが入っているときと入っていないときでulを切り替えてるけど、liのv-ifしか変わらないのでなんとかしたい-->
+    <ul v-if="showOnlyIncomplete">
+        <li class="card-panel hoverable" v-for="item in taskList" v-if="!item.complete">
+            <div class="row" v-if="item.editFlag">
+                <div class="col s4">
+                    <form @submit.prevent="item.editFlag = !item.editFlag">
+                        <input id="edit-title" class="task-title" type="text" v-model="item.title">
+                        <label for="edit-title">Title</label>
+                    </form>
+                </div>
+            </div>
+            <div class="row" v-else>
+                <label>
+                    <input type="checkbox" v-model="item.complete">
+                    <span class="task-title">{{item.title}}</span>
+                </label>
+            </div>
+            <div class="right-align el-card-bottom">
+                <button class="waves-effect btn-flat" v-on:click="item.editFlag = !item.editFlag">
+                    <i class="material-icons" style="color: lightseagreen" v-if="item.editFlag">done</i>
+                    <i class="far fa-edit" style="color: dimgray" v-else></i>
+                </button>
+                <button class="waves-effect btn-flat" style="color: Tomato"><i class="far fa-trash-alt"></i>
+                </button>
+            </div>
+        </li>
     </ul>
-
-    <table border="1">
-        <tr>
-            <th>項目</th>
-            <th>登録日</th>
-            <th>期限</th>
-            <th>完了</th>
-        </tr>
-        <tr th:each="task, status: ${tasks}">
-            <td th:text="${task.title}"></td>
-            <td th:text="${task.createdDate}"></td>
-            <td th:text="${task.deadline}"></td>
-            <td th:with="flag=${task.progressFlag}"><p th:text="${flag}"></p></td>
-        </tr>
-    </table>
+    <ul v-else>
+        <li class="card-panel hoverable" v-for="item in taskList">
+            <div class="row" v-if="item.editFlag">
+                <div class="col s4">
+                    <form @submit.prevent="item.editFlag = !item.editFlag">
+                        <input id="edit-title2" class="task-title" type="text" v-model="item.title">
+                        <label for="edit-title2">Title</label>
+                    </form>
+                </div>
+            </div>
+            <div class="row" v-else>
+                <label>
+                    <input type="checkbox" v-model="item.complete">
+                    <span class="task-title">{{item.title}}</span>
+                </label>
+            </div>
+            <div class="right-align el-card-bottom">
+                <button class="waves-effect btn-flat" v-on:click="item.editFlag = !item.editFlag">
+                    <i class="material-icons" style="color: lightseagreen" v-if="item.editFlag">done</i>
+                    <i class="far fa-edit" style="color: dimgray" v-else></i>
+                </button>
+                <button class="waves-effect btn-flat" style="color: Tomato"><i class="far fa-trash-alt"></i>
+                </button>
+            </div>
+        </li>
+    </ul>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios@0.19.2/index.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script src="https://kit.fontawesome.com/cb34a2aa50.js" crossorigin="anonymous"></script>
+<script src="../static/js/app.js"></script>
 </body>
 </html>

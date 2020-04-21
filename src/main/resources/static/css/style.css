@@ -1,0 +1,8 @@
+.task-title {
+    color: dimgray;
+    font-size: x-large !important;
+}
+
+.el-card-bottom {
+    margin-bottom: 0px;
+}
