@@ -16,9 +16,13 @@ class TaskRestController {
 
     @ResponseBody
     @RequestMapping(value = ["edit"], method = [RequestMethod.POST])
-    fun edit(@RequestBody task: Task): Unit {
-        taskRepository.save(task)
+    fun insertUpdate(@RequestBody task: Task): Task {
+        return taskRepository.save(task)
     }
 
-
+    @ResponseBody
+    @RequestMapping(value = ["delete"], method = [RequestMethod.DELETE])
+    fun delete(@RequestBody task: Task) {
+        taskRepository.delete(task)
+    }
 }
