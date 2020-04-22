@@ -28,9 +28,6 @@ import java.time.LocalDate
 
 const val PAST = 1
 const val FUTURE = 2
-const val MSG_CREATE_COMPLETED = "作成しました。"
-const val MSG_CREATE_FAILED = "作成に失敗しました。"
-const val DEFAULT_DATE_FORMAT = "yyyy/MM/dd"
 
 @Service
 class TaskManagementService {
@@ -54,10 +51,16 @@ class TaskManagementService {
         return toFormList(taskRepository.findByDeadline(date))
     }
 
-    fun createTask(taskForm: TaskForm): String{
-        val task = taskForm.toEntity()
-        taskRepository.save(task as Task)
-        return MSG_CREATE_COMPLETED
+    fun insertUpdate(taskForm: TaskForm): TaskForm{
+        val task: Task = taskForm.toEntity() as Task
+
+        return taskRepository.save(task).toForm() as TaskForm
+    }
+
+    fun delete(taskForm: TaskForm) {
+        val task: Task = taskForm.toEntity() as Task
+
+        taskRepository.delete(task)
     }
 
     /**

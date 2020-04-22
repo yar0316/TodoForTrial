@@ -8,54 +8,46 @@ import java.time.LocalDate
 
 /**
  * 新規作成時のフォーム入力用モデル。
- * Entityと違って全部文字列で取り扱いたいのでこうなった
+ * 簡易版だけどDBは共有なのでこうなった。
  */
 @Component
-class TaskForm() : BaseForm, Serializable {
+class TaskForm(var id: String? = null,
+               var title: String = "",
+               var progressFlag: Boolean = false,
+        //完全にフロント用。サーバー側でなにかに使うことはない
+               private var editFlag: Boolean = false) : BaseForm, Serializable {
 
-    var id: String? = null
-    var title: String = ""
-    var createdDate: String = ""
-    var deadline: String = ""
-    var progressFlag: Boolean = false
 
     constructor(
-            id:String?,
+            id: String?,
             title: String,
-            createdDate: String,
-            deadLine: String,
             iProgressFlag: Int
     ) : this(
             id,
             title,
-            createdDate,
-            deadLine,
-            when(iProgressFlag){
+            when (iProgressFlag) {
                 0 -> false
                 else -> true
             }
     )
 
     constructor(
-            id:String?,
+            id: String?,
             title: String,
-            createdDate: String,
-            deadLine: String,
             progressFlag: Boolean
     ) : this() {
         this.id = id
         this.title = title
-        this.createdDate = createdDate
-        this.deadline = deadLine
         this.progressFlag = progressFlag
     }
 
     override fun toEntity(): BaseEntity = Task(
-    this.id?.toInt(),
-    this.title,
-    LocalDate.parse(this.createdDate),
-    LocalDate.parse(this.deadline),
-    this.progressFlag
+            this.id?.toInt(),
+            this.title,
+            "",
+            LocalDate.now(),
+            LocalDate.now(),
+            this.progressFlag
     )
 
 }

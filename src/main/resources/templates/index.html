@@ -21,7 +21,7 @@
     </p>
     <!--    "完了してないもののみ表示"にチェックが入っているときと入っていないときでulを切り替えてるけど、liのv-ifしか変わらないのでなんとかしたい-->
     <ul v-if="showOnlyIncomplete">
-        <li class="card-panel hoverable" v-for="item in taskList" v-if="!item.complete">
+        <li class="card-panel hoverable" v-for="(item, index) in taskList" v-if="!item.complete">
             <div class="row" v-if="item.editFlag">
                 <div class="col s4">
                     <form @submit.prevent="item.editFlag = !item.editFlag">
@@ -37,7 +37,7 @@
                 </label>
             </div>
             <div class="right-align el-card-bottom">
-                <button class="waves-effect btn-flat" @click="item.editFlag = !item.editFlag">
+                <button class="waves-effect btn-flat" @click="switchEdit(index)">
                     <i class="material-icons" style="color: lightseagreen" v-if="item.editFlag">done</i>
                     <i class="far fa-edit" style="color: dimgray" v-else></i>
                 </button>
@@ -64,7 +64,7 @@
                 </label>
             </div>
             <div class="right-align el-card-bottom">
-                <button class="waves-effect btn-flat" @click="item.editFlag = !item.editFlag">
+                <button class="waves-effect btn-flat" @click="switchEdit(index)">
                     <i class="material-icons" style="color: lightseagreen" v-if="item.editFlag">done</i>
                     <i class="far fa-edit" style="color: dimgray" v-else></i>
                 </button>
@@ -75,6 +75,7 @@
         </li>
     </ul>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js" integrity="sha256-T/f7Sju1ZfNNfBh7skWn0idlCBcI3RwdLSS4/I7NQKQ=" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios@0.19.2/index.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
