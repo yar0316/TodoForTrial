@@ -6,3 +6,7 @@
 .el-card-bottom {
     margin-bottom: 0px;
 }
+
+[v-cloak] {
+    display: none;
+}

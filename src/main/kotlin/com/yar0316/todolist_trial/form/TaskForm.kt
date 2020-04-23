@@ -1,3 +1,9 @@
+/**
+ * 新規作成時のフォーム入力用モデル。
+ * 簡易版だけどDBは共有なのでこうなった。
+ *
+ * @author yar0316
+ */
 package com.yar0316.todolist_trial.form
 
 import com.yar0316.todolist_trial.entity.BaseEntity
@@ -6,16 +12,12 @@ import org.springframework.stereotype.Component
 import java.io.Serializable
 import java.time.LocalDate
 
-/**
- * 新規作成時のフォーム入力用モデル。
- * 簡易版だけどDBは共有なのでこうなった。
- */
 @Component
 class TaskForm(var id: String? = null,
                var title: String = "",
                var progressFlag: Boolean = false,
-        //完全にフロント用。サーバー側でなにかに使うことはない
-               private var editFlag: Boolean = false) : BaseForm, Serializable {
+               private var editFlag: Boolean = false // クライアントサイドで利用する編集用フラグ。サーバサイドでいじることはない
+) : BaseForm, Serializable {
 
 
     constructor(
@@ -31,16 +33,9 @@ class TaskForm(var id: String? = null,
             }
     )
 
-    constructor(
-            id: String?,
-            title: String,
-            progressFlag: Boolean
-    ) : this() {
-        this.id = id
-        this.title = title
-        this.progressFlag = progressFlag
-    }
-
+    /**
+     * @see com.yar0316.todolist_trial.form.BaseForm.toEntity
+     */
     override fun toEntity(): BaseEntity = Task(
             this.id?.toInt(),
             this.title,

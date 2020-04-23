@@ -8,6 +8,7 @@ import com.yar0316.todolist_trial.form.TaskForm
 import com.yar0316.todolist_trial.service.TaskManagementService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
+import javax.servlet.http.HttpServletResponse
 
 @RestController
 class TaskRestController {
@@ -19,14 +20,14 @@ class TaskRestController {
     fun get(): List<TaskForm> = taskManagementService.findAll()
 
     @ResponseBody
-    @RequestMapping(value = ["edit"], method = [RequestMethod.POST])
+    @RequestMapping(value = ["insertUpdate"], method = [RequestMethod.POST])
     fun insertUpdate(@RequestBody task: TaskForm): TaskForm {
         return taskManagementService.insertUpdate(task)
     }
 
     @ResponseBody
-    @RequestMapping(value = ["delete"], method = [RequestMethod.DELETE])
-    fun delete(@RequestBody task: TaskForm) {
-        taskManagementService.delete(task)
+    @RequestMapping(value = ["delete/{id}"], method = [RequestMethod.DELETE])
+    fun delete(@PathVariable("id") id: Int): String{
+        return taskManagementService.delete(id)
     }
 }

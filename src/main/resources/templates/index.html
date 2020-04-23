@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-<div id="app" class="container">
+<div id="app" class="container" v-cloak>
     <h1>Todo List</h1>
 
     <form @submit.prevent="addNewItem">
@@ -19,20 +19,23 @@
             <span>Show only incomplete tasks</span>
         </label>
     </p>
-    <!--    "完了してないもののみ表示"にチェックが入っているときと入っていないときでulを切り替えてるけど、liのv-ifしか変わらないのでなんとかしたい-->
+    <!--
+        "完了してないもののみ表示"にチェックが入っているときと入っていないときでulを切り替えてるけど、liのv-ifしか変わらないのでなんとかしたい
+        show only...にチェックが付いたとき、完了しているタスクを何らかのクラスに所属させる->そのクラスをCSSで非表示にするとか
+    -->
     <ul v-if="showOnlyIncomplete">
-        <li class="card-panel hoverable" v-for="(item, index) in taskList" v-if="!item.complete">
+        <li class="card-panel hoverable" v-for="(item, index) in taskList" v-if="!item.progressFlag">
             <div class="row" v-if="item.editFlag">
                 <div class="col s4">
-                    <form @submit.prevent="item.editFlag = !item.editFlag">
+                    <form @submit.prevent="switchEdit(index)">
                         <input id="edit-title" class="task-title" type="text" v-model="item.title">
-                        <label for="edit-title">Title</label>
+                        <label for="edit-title">Editing to-do title...</label>
                     </form>
                 </div>
             </div>
             <div class="row" v-else>
                 <label>
-                    <input type="checkbox" v-model="item.complete">
+                    <input type="checkbox" v-model="item.progressFlag" @change="switchProgress(index)">
                     <span class="task-title">{{item.title}}</span>
                 </label>
             </div>
@@ -51,15 +54,15 @@
         <li class="card-panel hoverable" v-for="(item, index) in taskList">
             <div class="row" v-if="item.editFlag">
                 <div class="col s4">
-                    <form @submit.prevent="item.editFlag = !item.editFlag">
+                    <form @submit.prevent="switchEdit(index)">
                         <input id="edit-title2" class="task-title" type="text" v-model="item.title">
-                        <label for="edit-title2">Title</label>
+                        <label for="edit-title2">Editing to-do title...</label>
                     </form>
                 </div>
             </div>
             <div class="row" v-else>
                 <label>
-                    <input type="checkbox" v-model="item.complete">
+                    <input type="checkbox" v-model="item.progressFlag" @change="switchProgress(index)">
                     <span class="task-title">{{item.title}}</span>
                 </label>
             </div>

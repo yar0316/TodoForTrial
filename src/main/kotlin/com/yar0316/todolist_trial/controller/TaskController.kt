@@ -1,13 +1,16 @@
+/**
+ * 通常のコントローラ
+ * このアプリで使われるのは最初にページにアクセスするときのみ。
+ *
+ * @author yar0316
+ */
 package com.yar0316.todolist_trial.controller
 
 import com.yar0316.todolist_trial.service.TaskManagementService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
-import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
 
 @Controller
 class TaskController {
@@ -15,46 +18,14 @@ class TaskController {
     @Autowired
     private lateinit var taskManagementService: TaskManagementService
 
+    /**
+     * トップページへのリクエスト
+     * ブラウザ側でAPIを叩かせているため、ここでデータを渡すことはしていない。
+     * 最初に通信をしないといけない分表示が遅くなるけど、向こう側でリクエストオブジェクトを取得する方法知らなかったのでこうした
+     */
     @RequestMapping(value = ["/", "list"], method = [RequestMethod.GET])
-    fun fetchAll(model: Model): String {
-        model.addAttribute("tasks", taskManagementService.findAll())
+    fun fetchAll(): String {
         return "index"
-    }
-
-    @RequestMapping(value = ["search/{type}"], method = [RequestMethod.GET])
-    fun searchByDate(
-            @PathVariable(name = "type", required = true) type: String,
-            @RequestParam(name = "value", required = false) value: String?,
-            model: Model
-    ): String {
-        // 検索ワードが入ってなければ全件表示
-        if (value.isNullOrEmpty()) {
-            return "redirect:/list"
-        }
-
-        // 登録日検索(指定した日付以降),
-        // 期日検索(指定した日付以前),
-        // タイトル検索
-        val tasks = when (type) {
-            "registeredDate" -> {
-                taskManagementService.findByCreatedDate(value)
-            }
-            "deadline" -> {
-                taskManagementService.findByDeadline(value)
-            }
-            "title" -> {
-                taskManagementService.findByTitle(value)
-            }
-            else -> throw RuntimeException("type not exists.")
-        }
-
-        model.addAttribute("tasks", tasks)
-        return ""
-    }
-
-    @RequestMapping(value = ["register"], method = [RequestMethod.POST])
-    fun register(): String {
-        return ""
     }
 
 }

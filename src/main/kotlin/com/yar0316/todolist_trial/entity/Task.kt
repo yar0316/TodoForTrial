@@ -1,3 +1,10 @@
+/**
+ * Todoタスクエンティティ。
+ * このアプリではID,タイトル,進行度(完了フラグ)しか使っていないが、
+ * もう一つ作る予定のちょっと情報量多めなToDoリストとDBを共有するためこうなった。
+ *
+ * @author yar0316
+ */
 package com.yar0316.todolist_trial.entity
 
 import com.yar0316.todolist_trial.form.BaseForm
@@ -21,6 +28,10 @@ data class Task(
         // 0:未完、1:完了
         val progressFlag: Int
 ) : BaseEntity {
+    /**
+     * 主にFormからEntityに変換する際利用するコンストラクタ。
+     * 進行度フラグはDBには数値で登録し、アプリ側では論理値で扱う。
+     */
     constructor(id: Int?, title: String, body: String, createdDate: LocalDate, deadline: LocalDate, progressFlag: Boolean) : this(
             id,
             title,
@@ -33,6 +44,12 @@ data class Task(
             }
     )
 
+    /**
+     * エンティティをフォームオブジェクトに変換する。
+     * エンティティのまま使わせてもいいが、使わない情報が多い。
+     * @see com.yar0316.todolist_trial.entity.BaseEntity.toForm
+     * @return 変換後のフォームオブジェクト
+     */
     override fun toForm(): BaseForm = TaskForm(
             this.id?.toString(),
             this.title,

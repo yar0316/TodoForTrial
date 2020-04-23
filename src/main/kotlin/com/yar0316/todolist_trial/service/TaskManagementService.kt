@@ -1,29 +1,18 @@
-package com.yar0316.todolist_trial.service
-
 /**
- * タスクの取り扱い
- * Repositoryだけでもよさそうなくらいシンプルな作りだがちょっと考えるべきことがあるので作ってある。
- * 考えるべきこと：新規登録・更新のときのみフォーム用オブジェクトを使用するか、表示に関してもフォーム用に変換して行うか。
- * 数が増えるほど変換のコストは掛かるので、できれば検索と表示の際には変換を掛けたくない。ただ型このままでちゃんと表示できるか不明。
- *
- * 2020/2/26 完了フラグのこと忘れてたのでviewに持ってくときも変換するのは確定
- * 追加：BaseService的なものを使ってエンティティ変換、フォーム変換を作っておく→このクラスでオーバーライドする形にしたほうがいいか検討
- * もしくはFormオブジェクトとEntityのベースを作ってそれぞれに変換用メソッドを定義しておくか
- * 感覚的にはサービスにやらせるよりはこっちのほうがいいかな？
- * ユーザー関連のテーブルも使うようになったらやったほうがいい
- *
- * TODO:EntityのリストをFormのリストに、FormのリストをEntityのリストに変換するメソッド定義(こっちは処理内容的にServiceに据え置き)
- *
+ * タスク関連のサービス<br>
+ * 指定された条件でデータの取得・登録・削除を行う。
+ * タイトル検索とか日付検索は消してもいいんだけどなんとなく残している。<br>
+ * 邪魔に感じたら消す。
  *
  * @author yar0316
  */
+package com.yar0316.todolist_trial.service
 
 import com.yar0316.todolist_trial.entity.Task
 import com.yar0316.todolist_trial.form.TaskForm
 import com.yar0316.todolist_trial.repository.TaskRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.text.Normalizer
 import java.time.LocalDate
 
 const val PAST = 1
@@ -39,7 +28,7 @@ class TaskManagementService {
 
     fun findByTitle(title: String): List<TaskForm> = toFormList(taskRepository.findByTitle("*${title}*"))
 
-    fun findByCreatedDate(inputDate: String): List<TaskForm>{
+    fun findByCreatedDate(inputDate: String): List<TaskForm> {
         // 作成日は今日以前の過去でなければ不正なので探さずに空っぽで返す
         val date = chkAndParseDate(inputDate, PAST) ?: return mutableListOf()
         return toFormList(taskRepository.findByCreatedDate(date))
@@ -51,16 +40,39 @@ class TaskManagementService {
         return toFormList(taskRepository.findByDeadline(date))
     }
 
-    fun insertUpdate(taskForm: TaskForm): TaskForm{
+    /**
+     * 新規作成、更新。
+     *
+     * @param taskForm クライアントから受け取った新規タスクデータ
+     * @return 登録/更新したタスクデータ
+     */
+    fun insertUpdate(taskForm: TaskForm): TaskForm {
         val task: Task = taskForm.toEntity() as Task
 
         return taskRepository.save(task).toForm() as TaskForm
     }
 
-    fun delete(taskForm: TaskForm) {
-        val task: Task = taskForm.toEntity() as Task
+    /**
+     * 削除
+     *
+     * @param id 削除するタスクのID
+     * @return 削除の成否
+     */
+    fun delete(id: Int): String {
+        val optionalTask = taskRepository.findById(id)
+        val task: Task
+        var msg = "id:${id} "
 
-        taskRepository.delete(task)
+        // 存在しないIDが送られてきた場合、失敗のメッセージを返す。
+        if (optionalTask.isPresent) {
+            task = optionalTask.get()
+            taskRepository.delete(task)
+            msg += MSG_DELETE_SUCCESSED
+        } else {
+            msg += MSG_TASK_NOT_EXISTS
+        }
+
+        return msg
     }
 
     /**
@@ -70,16 +82,16 @@ class TaskManagementService {
      * @param tense 時制
      * @return LocalDate? 日付として解析できない場合、または指定された時制(過去、未来、今日)から外れた日付だった場合、null
      */
-    private fun chkAndParseDate(dateStr: String, tense: Int): LocalDate?{
-            // 日付に変換できなかった場合この時点で例外
-            val date = LocalDate.parse(dateStr)
-            val checker = supplyChecker(tense)
+    private fun chkAndParseDate(dateStr: String, tense: Int): LocalDate? {
+        // 日付に変換できなかった場合この時点で例外
+        val date = LocalDate.parse(dateStr)
+        val checker = supplyChecker(tense)
 
-            // 指定された時制から外れていないかチェック
-            if (!checker(date)){
-                return null
-            }
-            return date
+        // 指定された時制から外れていないかチェック
+        if (!checker(date)) {
+            return null
+        }
+        return date
 
     }
 
@@ -92,9 +104,9 @@ class TaskManagementService {
      * @return 日付を受け取って時制のチェックを行う関数
      */
     private fun supplyChecker(tense: Int): (LocalDate) -> Boolean {
-        return when(tense){
-            PAST -> {date -> date < LocalDate.now().plusDays(1L)}
-            FUTURE -> {date -> date > LocalDate.now().minusDays(1L)}
+        return when (tense) {
+            PAST -> { date -> date < LocalDate.now().plusDays(1L) }
+            FUTURE -> { date -> date > LocalDate.now().minusDays(1L) }
             else -> throw RuntimeException("時制が不明です")
         }
     }
@@ -107,7 +119,7 @@ class TaskManagementService {
     fun toFormList(entityList: List<Task>): List<TaskForm> {
         val formList = ArrayList<TaskForm>()
 
-        entityList.forEach{ formList.add(it.toForm() as TaskForm) }
+        entityList.forEach { formList.add(it.toForm() as TaskForm) }
         return formList
     }
 
@@ -122,5 +134,10 @@ class TaskManagementService {
 
         formList.forEach { entityList.add(it.toEntity() as Task) }
         return entityList
+    }
+
+    companion object {
+        private const val MSG_DELETE_SUCCESSED = "削除しました。"
+        private const val MSG_TASK_NOT_EXISTS = "存在しません。"
     }
 }
